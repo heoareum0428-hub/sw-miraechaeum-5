@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>5차시 | 삼목놀이를 해보아요</title>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <style>
+    :root{
+      --blue:#006fd3;
+      --red:#d73333;
+      --ink:#1e1e1e;
+      --line:#b7bdc5;
+      --soft:#f5f7fa;
+      --soft-blue:#eef6ff;
+      --soft-red:#fff1f1;
+      --muted:#6d7580;
+      --ok:#14804a;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:#eef1f4;color:var(--ink);font-family:"Malgun Gothic","Apple SD Gothic Neo",sans-serif}
+    button,input{font:inherit}
+    button{touch-action:manipulation}
+    .page{width:calc(100% - 24px);max-width:1180px;margin:18px auto;background:#fff;min-height:760px;border:1px solid #c7ccd2;box-shadow:0 2px 10px rgba(0,0,0,.06);min-width:0}
+    .header{display:grid;grid-template-columns:135px minmax(0,1fr) minmax(390px,430px);min-height:108px;border:5px solid #5a5a5a;outline:1px solid #9b9b9b;outline-offset:-9px;background:#fff}
+    .header-left,.header-title,.header-info{display:flex;align-items:center}
+    .header-left{border-right:1px solid #8a8a8a;padding:12px 16px;justify-content:center}
+    .lesson-badge{font-size:30px;font-weight:500;white-space:nowrap;letter-spacing:-1px}
+    .header-title{justify-content:center;font-size:28px;font-weight:500;letter-spacing:-1px;padding:12px 18px;border-right:1px solid #8a8a8a;white-space:nowrap}
+    .header-info{padding:10px 12px;display:flex;justify-content:center;min-width:0;overflow:hidden}
+    .info-grid{width:100%;min-width:0;display:grid;grid-template-rows:1fr 1fr;gap:10px;align-content:center}
+    .info-row{display:grid;align-items:center;min-height:28px;white-space:nowrap}
+    .info-row.schoolline{grid-template-columns:1.55fr .78fr .68fr;gap:12px}.info-row.names{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+    .info-row label{font-size:14px;font-weight:700;color:#111;white-space:nowrap}
+    .info-row .suffix{font-size:14px;font-weight:700;color:#111;white-space:nowrap}
+    .header-input{height:24px;border:0;border-bottom:1px solid #222;padding:0 2px;background:transparent;outline:none;min-width:0}
+    .compact-field{display:grid;grid-template-columns:minmax(34px,1fr) auto;align-items:end;gap:4px;min-width:0}.compact-field.school{grid-template-columns:minmax(88px,1fr) auto}.school-input,.grade-input,.class-input,.name-input{width:100%;min-width:0}.grade-input,.class-input{text-align:center}.name-field{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:end;gap:6px;min-width:0}
+    .main{padding:18px 22px 28px}
+    .statusbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 12px;background:#fafafa;border:1px solid #d7dbe0;margin-bottom:14px;min-height:42px}
+    .room-chip{font-size:14px}.room-chip strong{color:var(--blue);font-size:17px}
+    .sync{font-size:13px;color:var(--muted)}.sync.bad{color:#b42318}
+    .progress{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid #bbb;margin-bottom:18px}
+    .step{padding:10px 8px;text-align:center;border-right:1px solid #ccc;font-weight:700;font-size:14px;background:#f7f7f7}.step:last-child{border-right:0}
+    .step.current{background:var(--soft-blue);color:var(--blue)}.step.done{background:#f1f8f4;color:var(--ok)}.step.locked{color:#999}
+    .panel{border:1px solid #aeb4ba;padding:18px;background:#fff;margin-bottom:14px}
+    .panel h2,.panel h3{margin:0 0 14px}.panel h2{font-size:22px}.panel h3{font-size:18px}
+    .center{text-align:center}.muted{color:var(--muted)}.blue{color:var(--blue)}.red{color:var(--red)}
+    .start-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:650px;margin:24px auto 18px}
+    .big-choice{padding:18px 18px;border:1.5px solid #555;background:#fff;font-weight:800;font-size:21px;cursor:pointer;border-radius:7px}.big-choice.primary-choice{background:var(--blue);border-color:var(--blue);color:#fff}.big-choice:hover{border-color:var(--blue);background:var(--soft-blue)}.big-choice.primary-choice:hover{background:#0066c2;color:#fff}
+    .join-panel{max-width:720px;margin:18px auto 0;padding:18px 24px;border:1px solid #c4d7e8;background:#f5faff;border-radius:6px}.join-panel.hidden{display:none}.join-box{max-width:440px;margin:0 auto;display:grid;grid-template-columns:1fr 110px;gap:14px;align-items:center}.join-box input{width:100%;padding:12px;border:1px solid #777;font-size:22px;letter-spacing:5px;text-align:center;border-radius:5px}.pair-code-banner{max-width:520px;margin:14px auto 18px;padding:14px 18px;border:2px solid var(--blue);background:var(--soft-blue);text-align:center}.pair-code-banner .pair-code-label{font-size:14px;color:var(--muted);margin-bottom:4px}.pair-code-banner .pair-code-number{font-size:38px;line-height:1.1;letter-spacing:8px;font-weight:900;color:var(--blue)}
+    .primary,.secondary,.danger,.role-btn{border:1px solid #6b727a;background:#fff;padding:10px 16px;font-weight:700;cursor:pointer}
+    .primary{background:var(--blue);border-color:var(--blue);color:#fff}.primary:disabled{opacity:.35;cursor:not-allowed}
+    .secondary{background:#fff}.danger{border-color:#b42318;color:#b42318}.role-btn{font-size:20px;padding:20px}.role-btn.o{color:var(--blue);border-color:var(--blue)}.role-btn.x{color:var(--red);border-color:var(--red)}
+    .actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+    .notice{padding:11px 13px;border-left:4px solid var(--blue);background:var(--soft-blue);margin:12px 0;font-size:14px}
+    .wait{padding:18px;text-align:center;border:1px dashed #9ca3ab;background:#fafafa}
+    .author-grid{display:grid;grid-template-columns:1fr;gap:14px}
+    .algo-card{border:1px solid #9ca3ab;padding:14px}.algo-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}.algo-head strong{font-size:18px}
+    .slot-wrap{display:grid;gap:7px;grid-template-columns:repeat(9,minmax(44px,1fr));max-width:950px;margin:0 auto}
+    .slot-wrap.sixteen{grid-template-columns:repeat(8,minmax(44px,1fr))}
+    .slot{height:54px;border:1.5px solid #7f8790;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:19px;background:#fff;user-select:none;touch-action:none;position:relative}
+    .slot.empty{background:#fafafa;color:#bbb}.slot.drag-target{outline:3px solid rgba(0,111,211,.22)}
+    .pool{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;min-height:44px;margin-top:12px}.num-btn{width:42px;height:42px;border:1px solid #6c747c;background:#fff;font-weight:800;cursor:pointer;touch-action:none;user-select:none}
+    .opponent-box{padding:18px;border:1px dashed #9ba2a9;background:#fafafa;text-align:center;font-weight:700}
+    .ready{color:var(--ok)}
+    .starter-box{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:680px;margin:18px auto}.starter-box button{padding:20px;font-size:18px}
+    .game-top{display:grid;grid-template-columns:1fr 1fr 1.4fr;gap:8px;margin-bottom:10px}.game-stat{border:1px solid #b7bdc5;padding:9px;text-align:center;background:#fafafa}.game-stat.current{font-size:19px;font-weight:800}
+    .algo-row{border:1px solid #aab1b8;padding:10px;margin:8px 0}.algo-row-title{font-weight:800;margin-bottom:7px}.algo-seq{display:grid;grid-template-columns:repeat(9,1fr);gap:5px}.algo-seq.sixteen{grid-template-columns:repeat(8,1fr)}
+    .algo-token{min-height:36px;border:1px solid #c1c6cb;display:flex;align-items:center;justify-content:center;font-weight:800;background:#fff;position:relative}.algo-token.done{text-decoration:line-through;color:#777;background:#f0f0f0}.algo-token.skipped{text-decoration:line-through;color:#8b8b8b;background:#ececec}.algo-token.skipped::after{content:"건너뜀";position:absolute;font-size:8px;bottom:1px;right:2px;font-weight:500}.algo-token.current-o{border:3px solid var(--blue);color:var(--blue);background:var(--soft-blue)}.algo-token.current-x{border:3px solid var(--red);color:var(--red);background:var(--soft-red)}
+    .board-wrap{display:flex;justify-content:center;padding:8px 0}.board{display:grid;border:2px solid #333;background:#333;gap:2px;width:min(54vw,520px);aspect-ratio:1/1}.board.n3{grid-template-columns:repeat(3,1fr)}.board.n4{grid-template-columns:repeat(4,1fr)}
+    .cell{border:0;background:#fff;font-size:clamp(22px,4vw,48px);font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;min-width:0;min-height:0;position:relative;overflow:hidden}.cell:disabled{cursor:default}.cell-number{position:relative;z-index:2;color:#222;font-size:clamp(18px,3vw,36px);font-weight:800}.cell-mark{position:absolute;inset:0;z-index:3;display:flex;align-items:center;justify-content:center;font-size:clamp(58px,9vw,112px);font-weight:900;line-height:1;opacity:.78;pointer-events:none}.cell-mark.o{color:var(--blue)}.cell-mark.x{color:var(--red)}.cell.win{background:#fff4b8;outline:4px solid #e0b100;outline-offset:-5px}
+    .result-banner{font-size:23px;font-weight:800;text-align:center;padding:14px;border:2px solid #555;margin:12px auto;max-width:760px}
+    .summary-table{width:100%;border-collapse:collapse;font-size:14px}.summary-table th,.summary-table td{border:1px solid #9ca3ab;padding:8px;vertical-align:top}.summary-table th{background:#f2f4f6}
+    .summary-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}.summary-stats>div{border:1px solid #aeb4ba;padding:12px;text-align:center;font-weight:800}
+    .capture{background:#fff;padding:18px;border:1px solid #777;margin-top:12px}.capture .cap-title{text-align:center;font-size:25px;font-weight:800;margin:8px 0 15px}.capture .cap-info{display:grid;grid-template-columns:repeat(5,1fr);border:1px solid #666;margin-bottom:12px}.capture .cap-info div{padding:7px;border-right:1px solid #aaa}.capture .cap-info div:last-child{border-right:0}.capture .cap-section{border:1px solid #888;margin:8px 0;padding:10px}.capture .cap-section h4{margin:0 0 6px;color:var(--blue)}.capture .small{font-size:12px;line-height:1.5;word-break:break-word}
+    .drag-ghost{position:fixed;z-index:9999;pointer-events:none;width:46px;height:46px;border:2px solid var(--blue);background:white;display:flex;align-items:center;justify-content:center;font-weight:800;box-shadow:0 4px 12px rgba(0,0,0,.2);transform:translate(-50%,-50%)}
+    .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#222;color:#fff;padding:11px 16px;border-radius:4px;z-index:10000;max-width:85vw;text-align:center;opacity:0;transition:.2s}.toast.show{opacity:1}
+    @media(max-width:1050px){
+      .header{grid-template-columns:125px minmax(0,1fr) minmax(360px,400px)}
+      .header-title{font-size:26px;padding:12px 10px}
+      .header-info{padding:9px 10px}
+      .info-row.schoolline{grid-template-columns:1.5fr .72fr .62fr;gap:8px}
+      .info-row.names{gap:12px}
+    }
+    @media(max-width:900px){.page{width:100%;margin:0;min-height:100vh}.header{grid-template-columns:108px minmax(0,1fr) 350px}.header-title{font-size:24px}.main{padding:14px}.board{width:min(64vw,500px)}.game-top{grid-template-columns:1fr 1fr}.game-stat.current{grid-column:1/-1}.slot{height:48px}.header-left{padding:10px}.lesson-badge{font-size:26px}.header-info{padding:8px 12px}.info-row.schoolline{gap:8px}.info-row.names{gap:10px}}
+    @media(max-width:700px){.header{grid-template-columns:1fr;border-width:3px;outline-offset:-6px}.header-left,.header-title{border-right:0;border-bottom:1px solid #999}.header-title{order:-1}.header-info{border:0}.start-grid{grid-template-columns:1fr}.board{width:min(92vw,500px)}.slot-wrap{grid-template-columns:repeat(5,1fr)}.slot-wrap.sixteen{grid-template-columns:repeat(4,1fr)}.algo-seq{grid-template-columns:repeat(5,1fr)}.algo-seq.sixteen{grid-template-columns:repeat(4,1fr)}}
+  </style>
+</head>
+<body>
+<div class="page">
+  <header class="header">
+    <div class="header-left">
+      <div class="lesson-badge">5차시</div>
+    </div>
+    <div class="header-title">삼목놀이를 해보아요</div>
+    <div class="header-info" id="headerInfo">
+      <div class="info-grid">
+        <div class="info-row schoolline">
+          <div class="compact-field school"><input class="header-input school-input" id="hSchool" data-info="school" aria-label="학교"><span class="suffix">초등학교</span></div>
+          <div class="compact-field"><input class="header-input grade-input" id="hGrade" data-info="grade" aria-label="학년"><span class="suffix">학년</span></div>
+          <div class="compact-field"><input class="header-input class-input" id="hClass" data-info="className" aria-label="반"><span class="suffix">반</span></div>
+        </div>
+        <div class="info-row names">
+          <div class="name-field"><label for="hName1">학생 1 :</label><input class="header-input name-input" id="hName1" data-info="student1Name"></div>
+          <div class="name-field"><label for="hName2">학생 2 :</label><input class="header-input name-input" id="hName2" data-info="student2Name"></div>
+        </div>
+      </div>
+    </div>
+  </header>
+  <main class="main">
+    <div class="statusbar">
+      <div class="room-chip" id="roomChip">짝 활동에 연결되지 않았습니다.</div>
+      <div class="sync" id="syncText">준비</div>
+    </div>
+    <div id="progress"></div>
+    <div id="app"></div>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const API_URL = 'https://script.google.com/macros/s/AKfycbw-GPlxMgH62ai8qjBAeB8cNl8sDMTMLusycFcEhTUEFctNnHri_TTX85B3as4kkz0rwA/exec';
+const BLUE = '#006fd3';
+const RED = '#d73333';
+const LAYOUTS = {
+  1:[1,2,3,4,5,6,7,8,9],
+  2:[1,2,3,4,5,6,7,8,9],
+  3:[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16],
+  4:[12,8,7,13,1,14,6,5,11,2,3,4,15,9,10,16]
+};
+const LABELS = {1:'1차 3×3',2:'2차 3×3',3:'3차 4×4',4:'4차 4×4'};
+const session = {
+  code: localStorage.getItem('ttt_pair_code') || '',
+  token: localStorage.getItem('ttt_pair_token') || '',
+  role: Number(localStorage.getItem('ttt_pair_role') || 0),
+  participantId: localStorage.getItem('ttt_participant_id') || ''
+};
+let state = null;
+let pollTimer = null;
+let inFlight = false;
+let lastRenderKey = '';
+let lastOwnAlgo = [];
+let dragState = null;
+let draftGame = 0;
+let draftDirty = false;
+let algoSaveSeq = 0;
+let algoSavePromise = Promise.resolve();
+let showCreatedCode = false;
+let joinAreaOpen = false;
+
+function qs(s){return document.querySelector(s)}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function toast(msg){const t=qs('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove('show'),2200)}
+function setSync(msg,bad=false){const e=qs('#syncText');if(!e)return;if(e.textContent===msg && e.className===('sync'+(bad?' bad':'')))return;e.textContent=msg;e.className='sync'+(bad?' bad':'')}
+function saveSession(data={}){
+  Object.assign(session,data);
+  if(session.code)localStorage.setItem('ttt_pair_code',session.code); else localStorage.removeItem('ttt_pair_code');
+  if(session.token)localStorage.setItem('ttt_pair_token',session.token); else localStorage.removeItem('ttt_pair_token');
+  if(session.role)localStorage.setItem('ttt_pair_role',String(session.role)); else localStorage.removeItem('ttt_pair_role');
+  if(session.participantId)localStorage.setItem('ttt_participant_id',session.participantId); else localStorage.removeItem('ttt_participant_id');
+}
+function clearSession(){saveSession({code:'',token:'',role:0,participantId:''});state=null;clearInterval(pollTimer);pollTimer=null;render(true)}
+async function api(action,data={},quiet=false){
+  if(inFlight && action==='getPairState') return null;
+  if(action==='getPairState') inFlight=true;
+  try{
+    const res=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,...data})});
+    const txt=await res.text();
+    let out; try{out=JSON.parse(txt)}catch(e){throw new Error('서버 응답을 확인할 수 없습니다. '+txt.slice(0,80))}
+    if(!out.ok) throw new Error(out.message||'요청을 처리하지 못했습니다.');
+    if(!quiet && action!=='getPairState')setSync('연결됨');
+    return out;
+  }catch(e){setSync('연결 확인 필요',true);if(!quiet)toast(e.message);throw e}
+  finally{if(action==='getPairState')inFlight=false}
+}
+function authData(extra={}){return {code:session.code,token:session.token,...extra}}
+
+function render(force=false){
+  const key=JSON.stringify({code:session.code,role:session.role,state});
+  if(!force && key===lastRenderKey)return;
+  if(document.activeElement && document.activeElement.matches('input') && !force)return;
+  lastRenderKey=key;
+  renderRoom();
+  renderProgress();
+  syncHeader();
+  if(!session.code || !session.token){renderLanding();return}
+  if(!state){qs('#app').innerHTML='<div class="panel center"><h2>짝 활동을 불러오는 중입니다.</h2></div>';return}
+  if(!session.role){renderRole();return}
+  const phase=state.phase||'info';
+  if(phase==='info' || phase==='authoring') renderAuthoring();
+  else if(phase==='starter') renderStarter();
+  else if(phase==='game') renderGame();
+  else if(phase==='result') renderResult();
+  else if(phase==='final') renderFinal();
+}
+function renderRoom(){
+  const e=qs('#roomChip');
+  if(session.code)e.innerHTML=`짝 코드 <strong>${esc(session.code)}</strong>${session.role?` · 나는 학생 ${session.role}(${session.role===1?'O':'X'})`:''}`;
+  else e.textContent='짝 활동에 연결되지 않았습니다.';
+}
+function renderProgress(){
+  const p=qs('#progress');
+  if(!state || !session.role){p.innerHTML='';return}
+  const current=state.currentGame||1;
+  const completed=(state.histories||[]).map(h=>h.game);
+  p.innerHTML='<div class="progress">'+[1,2,3,4].map(n=>{
+    let c='step locked', mark='○';
+    if(completed.includes(n)){c='step done';mark='✓'}
+    else if(n===current){c='step current';mark='●'}
+    return `<div class="${c}">${mark} ${LABELS[n]}</div>`
+  }).join('')+'</div>';
+}
+function syncHeader(){
+  const info=state?.info||{};
+  ['school','grade','className','student1Name','student2Name'].forEach(k=>{const el=document.querySelector(`[data-info="${k}"]`);if(el && document.activeElement!==el)el.value=info[k]||''});
+  document.querySelectorAll('#headerInfo input').forEach(i=>{i.disabled=!session.role || ['game','result','final'].includes(state?.phase)});
+}
+function renderLanding(){
+  qs('#app').innerHTML=`<section class="panel center" style="padding:22px 22px 24px">
+    <h2 style="font-size:27px;margin-bottom:12px">짝 활동을 시작해보세요.</h2>
+    <p class="muted" style="font-size:18px;line-height:1.65;margin:0">두 학생은 각자의 아이북에서 같은 짝 코드로 연결하여 활동합니다.</p>
+    <div class="start-grid">
+      <button class="big-choice primary-choice" id="createBtn">짝 활동 시작하기</button>
+      <button class="big-choice" id="showJoinBtn">짝 코드로 참여하기</button>
+    </div>
+    <div class="join-panel ${joinAreaOpen?'':'hidden'}" id="joinArea">
+      <div class="join-box">
+        <input id="joinCode" inputmode="numeric" maxlength="4" placeholder="0000">
+        <button class="primary" id="joinBtn">참여하기</button>
+      </div>
+    </div>
+  </section>`;
+  qs('#createBtn').onclick=createPair;
+  qs('#showJoinBtn').onclick=()=>{joinAreaOpen=true;renderLanding();setTimeout(()=>qs('#joinCode')?.focus(),0)};
+  if(qs('#joinBtn'))qs('#joinBtn').onclick=joinPair;
+}
+async function createPair(){
+  const btn=qs('#createBtn');if(btn){btn.disabled=true;btn.textContent='짝 코드 만드는 중…'}
+  try{const r=await api('createPair');showCreatedCode=true;joinAreaOpen=false;saveSession({code:r.code,token:r.token,participantId:r.participantId,role:r.role||0});state=r.state||null;startPolling();await refresh(true)}catch(e){if(btn){btn.disabled=false;btn.textContent='짝 활동 시작하기'}}
+}
+async function joinPair(){
+  const code=(qs('#joinCode')?.value||'').trim();
+  if(!/^\d{4}$/.test(code)){toast('4자리 짝 코드를 입력해 주세요.');return}
+  try{const r=await api('joinPair',{code});showCreatedCode=false;joinAreaOpen=false;saveSession({code,token:r.token,participantId:r.participantId,role:r.role||0});state=r.state||null;startPolling();await refresh(true)}catch(e){}
+}
+function renderRole(){
+  const assigned=state.myRole||0;if(assigned){saveSession({role:assigned});render(true);return}
+  const codeBanner=showCreatedCode?`<div class="pair-code-banner"><div class="pair-code-label">친구에게 알려줄 짝 코드</div><div class="pair-code-number">${esc(session.code)}</div></div>`:'';
+  qs('#app').innerHTML=`<section class="panel center">${codeBanner}<h2>내 역할을 선택하세요.</h2><p class="muted">한 학생이 역할을 선택하면 다른 학생은 반대 역할로 연결됩니다.</p><div class="start-grid"><button class="role-btn o" data-role="1">학생 1 (O)</button><button class="role-btn x" data-role="2">학생 2 (X)</button></div><div class="actions"><button class="secondary" id="leaveBtn">짝 연결 나가기</button></div></section>`;
+  document.querySelectorAll('[data-role]').forEach(b=>b.onclick=()=>claimRole(Number(b.dataset.role)));qs('#leaveBtn').onclick=clearSession;
+}
+async function claimRole(role){try{const r=await api('claimRole',authData({role}));if(r.role){saveSession({role:r.role})}state=r.state;render(true)}catch(e){}}
+
+function currentMax(){return (state?.currentGame||1)<=2?9:16}
+function ownAlgo(){return state?.myAlgorithm||[]}
+function renderAuthoring(){
+  const role=session.role, other=role===1?2:1, max=currentMax(), confirmed=state.myConfirmed;
+  if(draftGame!==state.currentGame){draftGame=state.currentGame;draftDirty=false;lastOwnAlgo=[...ownAlgo()]}
+  else if(!draftDirty){lastOwnAlgo=[...ownAlgo()]}
+  if(state.myAlgorithm)state.myAlgorithm=[...lastOwnAlgo];
+  qs('#app').innerHTML=`<section class="panel">
+    <div class="algo-head"><div><strong>${LABELS[state.currentGame]}</strong><div class="muted">학생 ${role}(${role===1?'O':'X'})의 알고리즘을 미리 만들어 보세요.</div></div><div>${confirmed?'<span class="ready">내 알고리즘 준비 완료</span>':''}</div></div>
+    <div class="notice">게임 시작 전에는 상대 학생의 알고리즘 숫자가 보이지 않습니다. 두 학생 모두 확정한 뒤 게임을 시작하면 서로의 전체 알고리즘이 공개됩니다.</div>
+    <div class="author-grid">
+      <div class="algo-card"><div class="algo-head"><strong class="${role===1?'blue':'red'}">학생 ${role}(${role===1?'O':'X'}) · 내 알고리즘</strong><span>${ownAlgo().length}/${max}</span></div>
+        ${algoEditorHtml(ownAlgo(),max,confirmed)}
+        <div class="actions"><button class="secondary" id="undoBtn" ${confirmed||ownAlgo().length===0?'disabled':''}>한 칸 되돌리기</button><button class="secondary" id="resetBtn" ${confirmed||ownAlgo().length===0?'disabled':''}>처음부터 다시</button><button class="primary" id="confirmBtn" ${confirmed||ownAlgo().length!==max?'disabled':''}>알고리즘 확정하기</button></div>
+      </div>
+      <div class="opponent-box">학생 ${other}(${other===1?'O':'X'}) 알고리즘<br><span class="${state.otherConfirmed?'ready':''}">${state.otherConfirmed?'알고리즘 준비 완료':'알고리즘 작성 중'}</span></div>
+    </div>
+  </section>`;
+  bindHeaderInfo();
+  if(!confirmed){bindAlgoEditor();qs('#undoBtn').onclick=()=>setOwnAlgorithm(lastOwnAlgo.slice(0,-1));qs('#resetBtn').onclick=()=>setOwnAlgorithm([]);qs('#confirmBtn').onclick=confirmAlgorithm}
+}
+function algoEditorHtml(arr,max,locked){
+  const cls=max===16?'slot-wrap sixteen':'slot-wrap';
+  const slots=Array.from({length:max},(_,i)=>`<div class="slot ${arr[i]==null?'empty':''}" data-slot="${i}">${arr[i]??(i+1)}</div>`).join('');
+  const used=new Set(arr),pool=Array.from({length:max},(_,i)=>i+1).filter(n=>!used.has(n)).map(n=>`<button class="num-btn" data-pool="${n}" ${locked?'disabled':''}>${n}</button>`).join('');
+  return `<div class="${cls}" id="slots">${slots}</div><div class="pool" id="pool">${pool}</div>`;
+}
+function bindHeaderInfo(){
+  document.querySelectorAll('#headerInfo input').forEach(el=>{el.onchange=saveInfo;el.onblur=saveInfo});
+}
+async function saveInfo(){
+  if(!session.role||!state)return;
+  const info={};document.querySelectorAll('#headerInfo input').forEach(el=>info[el.dataset.info]=el.value.trim());
+  try{const r=await api('updateInfo',authData({info}),true);state=r.state;lastRenderKey='';render()}catch(e){}
+}
+function bindAlgoEditor(){
+  document.querySelectorAll('[data-pool]').forEach(b=>b.addEventListener('pointerdown',startPointerDrag));
+  document.querySelectorAll('[data-slot]').forEach(s=>s.addEventListener('pointerdown',startPointerDrag));
+}
+function startPointerDrag(ev){
+  if(state.myConfirmed || dragState)return;
+  const pool=ev.currentTarget.dataset.pool;
+  const slot=ev.currentTarget.dataset.slot;
+  const fromSlot=slot!==undefined?Number(slot):null;
+  if(fromSlot!==null && lastOwnAlgo[fromSlot]==null)return;
+  ev.preventDefault();
+  try{ev.currentTarget.setPointerCapture?.(ev.pointerId)}catch(e){}
+  const value=pool!==undefined?Number(pool):lastOwnAlgo[fromSlot];
+  dragState={pointerId:ev.pointerId,type:pool!==undefined?'pool':'slot',from:fromSlot,value,startX:ev.clientX,startY:ev.clientY,moved:false,target:ev.currentTarget};
+  const ghost=document.createElement('div');ghost.className='drag-ghost';ghost.textContent=value;document.body.appendChild(ghost);dragState.ghost=ghost;moveGhost(ev.clientX,ev.clientY);
+  window.addEventListener('pointermove',pointerMove,{passive:false});
+  window.addEventListener('pointerup',pointerUp,{passive:false});
+  window.addEventListener('pointercancel',pointerCancel,{passive:false});
+}
+function moveGhost(x,y){if(dragState?.ghost){dragState.ghost.style.left=x+'px';dragState.ghost.style.top=y+'px'}}
+function pointerMove(ev){
+  if(!dragState || ev.pointerId!==dragState.pointerId)return;
+  ev.preventDefault();
+  const dx=ev.clientX-dragState.startX,dy=ev.clientY-dragState.startY;
+  if(Math.hypot(dx,dy)>6)dragState.moved=true;
+  moveGhost(ev.clientX,ev.clientY);
+  document.querySelectorAll('.drag-target').forEach(e=>e.classList.remove('drag-target'));
+  const t=document.elementFromPoint(ev.clientX,ev.clientY)?.closest('[data-slot]');
+  if(t)t.classList.add('drag-target');
+}
+function pointerCancel(ev){if(!dragState || (ev&&ev.pointerId!==dragState.pointerId))return;cleanupDrag()}
+function pointerUp(ev){
+  if(!dragState || ev.pointerId!==dragState.pointerId)return;
+  ev.preventDefault();
+  const current={...dragState};
+  const t=document.elementFromPoint(ev.clientX,ev.clientY)?.closest('[data-slot]');
+  let arr=[...lastOwnAlgo];
+  if(!current.moved){
+    if(current.type==='pool' && arr.length<currentMax())arr.push(current.value);
+  }else if(t){
+    const to=Number(t.dataset.slot);
+    if(current.type==='pool'){
+      if(!arr.includes(current.value)){
+        if(to>=arr.length)arr.push(current.value);
+        else arr.splice(to,0,current.value);
+      }
+    }else{
+      const from=current.from;
+      if(from!==to && from>=0 && from<arr.length){
+        const v=arr.splice(from,1)[0];
+        let target=Math.max(0,Math.min(to,arr.length));
+        if(from<to)target=Math.max(0,target-1);
+        arr.splice(target,0,v);
+      }
+    }
+  }
+  cleanupDrag();
+  if(JSON.stringify(arr)!==JSON.stringify(lastOwnAlgo))setOwnAlgorithm(arr);
+}
+function cleanupDrag(){
+  window.removeEventListener('pointermove',pointerMove);
+  window.removeEventListener('pointerup',pointerUp);
+  window.removeEventListener('pointercancel',pointerCancel);
+  document.querySelectorAll('.drag-target').forEach(e=>e.classList.remove('drag-target'));
+  if(dragState?.ghost)dragState.ghost.remove();
+  dragState=null;
+}
+function queueAlgorithmSave(arr){
+  const seq=++algoSaveSeq;
+  algoSavePromise=algoSavePromise.catch(()=>{}).then(async()=>{
+    const r=await api('updateAlgorithm',authData({algorithm:arr}),true);
+    if(seq===algoSaveSeq){
+      state=r.state;
+      draftDirty=false;
+      lastOwnAlgo=[...(state.myAlgorithm||arr)];
+      lastRenderKey='';
+      render();
+    }
+  }).catch(e=>{setSync('연결 확인 필요',true);toast(e.message)});
+  return algoSavePromise;
+}
+function setOwnAlgorithm(arr){
+  if(state.myConfirmed)return;
+  const max=currentMax();
+  const clean=arr.map(Number).filter((n,i,a)=>Number.isInteger(n)&&n>=1&&n<=max&&a.indexOf(n)===i).slice(0,max);
+  lastOwnAlgo=[...clean];
+  draftGame=state.currentGame;
+  draftDirty=true;
+  state.myAlgorithm=[...clean];
+  lastRenderKey='';
+  render(true);
+  queueAlgorithmSave([...clean]);
+}
+async function confirmAlgorithm(){try{await algoSavePromise;const r=await api('confirmAlgorithm',authData());draftDirty=false;state=r.state;lastRenderKey='';render(true)}catch(e){}}
+
+function renderStarter(){
+  const starter=state.starter;
+  qs('#app').innerHTML=`<section class="panel center"><h2>${LABELS[state.currentGame]} · 선(先) 정하기</h2><p>가위바위보로 먼저 시작할 사람을 정해보세요.</p><div class="starter-box"><button class="role-btn o" data-start="1">학생 1 선(先)</button><button class="role-btn x" data-start="2">학생 2 선(先)</button></div>${starter?`<div class="result-banner">선(先) : 학생 ${starter}(${starter===1?'O':'X'})</div><div class="actions"><button class="secondary" id="clearStarter">선 다시 선택하기</button><button class="primary" id="startGame">게임 시작하기</button></div>`:'<p class="muted">가위바위보에서 이긴 학생을 선택하세요.</p>'}</section>`;
+  document.querySelectorAll('[data-start]').forEach(b=>b.onclick=()=>setStarter(Number(b.dataset.start)));if(starter){qs('#clearStarter').onclick=()=>setStarter(0);qs('#startGame').onclick=startGame}
+}
+async function setStarter(starter){try{const r=await api('setFirstPlayer',authData({starter}));state=r.state;lastRenderKey='';render(true)}catch(e){}}
+async function startGame(){try{const r=await api('startGame',authData());state=r.state;lastRenderKey='';render(true)}catch(e){}}
+
+function renderGame(){
+  const s=state, my=session.role, other=my===1?2:1;
+  qs('#app').innerHTML=`<section class="panel">
+    <div class="game-top"><div class="game-stat">${LABELS[s.currentGame]}</div><div class="game-stat">선(先) : 학생 ${s.starter}(${s.starter===1?'O':'X'})</div><div class="game-stat current ${s.turn===1?'blue':'red'}">현재 차례 : 학생 ${s.turn}(${s.turn===1?'O':'X'})</div></div>
+    ${gameAlgoHtml(my,s.algorithms?.[String(my)]||[],s)}
+    ${boardHtml(s)}
+    ${gameAlgoHtml(other,s.algorithms?.[String(other)]||[],s)}
+    <div class="center muted">${s.turn===my?'내 차례입니다. 알고리즘의 현재 숫자를 게임판에서 선택하세요.':'지금은 상대방의 차례입니다.'}</div>
+  </section>`;
+  document.querySelectorAll('[data-cell]').forEach(b=>b.onclick=()=>makeMove(Number(b.dataset.cell)));
+}
+function gameAlgoHtml(role,arr,s){
+  const max=arr.length, exec=new Set((s.executed?.[String(role)]||[]).map(Number)), skip=new Set((s.skipped?.[String(role)]||[]).map(Number));
+  const ptr=Number(s.pointers?.[String(role)]||0); const current=arr[ptr];
+  const toks=arr.map((n,i)=>{let c='algo-token';if(exec.has(n))c+=' done';else if(skip.has(n))c+=' skipped';else if(i===ptr && s.turn===role)c+=role===1?' current-o':' current-x';return `<div class="${c}">${n}</div>`}).join('');
+  return `<div class="algo-row"><div class="algo-row-title ${role===1?'blue':'red'}">학생 ${role}(${role===1?'O':'X'}) 알고리즘 ${s.turn===role&&current?`· 현재 ${current}`:''}</div><div class="algo-seq ${max===16?'sixteen':''}">${toks}</div></div>`;
+}
+function boardHtml(s,readonly=false){
+  const layout=LAYOUTS[s.currentGame], n=layout.length===9?3:4, win=new Set((s.winningNumbers||[]).map(Number));
+  return `<div class="board-wrap"><div class="board n${n}">${layout.map(num=>{const m=s.board?.[String(num)]||'';const cls='cell'+(win.has(num)?' win':'');const mark=m?`<span class="cell-mark ${m==='O'?'o':'x'}">${m}</span>`:'';return `<button class="${cls}" data-cell="${num}" ${readonly||m||s.phase!=='game'?'disabled':''}><span class="cell-number">${num}</span>${mark}</button>`}).join('')}</div></div>`;
+}
+async function makeMove(number){
+  if(state.turn!==session.role){toast('지금은 상대방의 차례입니다.');return}
+  try{const r=await api('makeMove',authData({number}));state=r.state;lastRenderKey='';render(true)}catch(e){}
+}
+
+function renderResult(){
+  const s=state, h=(s.histories||[]).find(x=>x.game===s.currentGame) || s.lastResult;
+  const msg=h?.winner===1?'학생 1(O)이 한 줄을 완성했습니다!':h?.winner===2?'학생 2(X)가 한 줄을 완성했습니다!':'무승부입니다.';
+  const next=s.currentGame<4?(s.currentGame===1?'2차 게임 준비하기':s.currentGame===2?'3차 4×4 게임 준비하기':'4차 게임 준비하기'):'전체 결과 확인하기';
+  qs('#app').innerHTML=`<section class="panel"><div class="result-banner">${msg}</div>${boardHtml({...s,phase:'result'},true)}<div class="center"><p>선(先) : 학생 ${h?.starter}(${h?.starter===1?'O':'X'})</p></div><div class="actions"><button class="primary" id="nextBtn">${next}</button></div></section>`;
+  qs('#nextBtn').onclick=s.currentGame<4?prepareNextGame:finalizeResults;
+}
+async function prepareNextGame(){try{const r=await api('prepareNextGame',authData());draftDirty=false;draftGame=r.state.currentGame;lastOwnAlgo=[];state=r.state;lastRenderKey='';render(true)}catch(e){}}
+async function finalizeResults(){try{const r=await api('finalizeResults',authData());state=r.state;lastRenderKey='';render(true)}catch(e){}}
+
+function renderFinal(){
+  const hs=state.histories||[];const wins1=hs.filter(h=>h.winner===1).length,wins2=hs.filter(h=>h.winner===2).length,draws=hs.filter(h=>!h.winner).length;
+  qs('#app').innerHTML=`<section class="panel"><h2 class="center">4게임 전체 결과</h2><div class="summary-stats"><div>학생 1(O)<br><span class="blue">${wins1}승</span></div><div>학생 2(X)<br><span class="red">${wins2}승</span></div><div>무승부<br>${draws}회</div></div>${summaryTable(hs)}<div class="notice">게임의 결과를 확인하고 다음 게임에서 새로운 알고리즘을 만들어 보았습니다. 인공지능의 강화학습에서도 여러 행동의 결과와 보상을 확인하면서 더 좋은 행동을 찾아갑니다.<br><strong>행동 → 결과 → 보상 → 다음 행동 선택</strong></div><div class="actions"><button class="primary" id="saveBtn" ${state.submissionStatus==='done'?'disabled':''}>${state.submissionStatus==='done'?'제출 완료':'결과 저장하기'}</button></div>${captureHtml(hs,wins1,wins2,draws)}</section>`;
+  qs('#saveBtn').onclick=saveAndSubmit;
+}
+function summaryTable(hs){
+  return `<table class="summary-table"><thead><tr><th>게임</th><th>선(先)</th><th>학생 1(O) 알고리즘</th><th>학생 2(X) 알고리즘</th><th>결과</th></tr></thead><tbody>${hs.map(h=>`<tr><td>${esc(h.label)}</td><td>학생 ${h.starter}(${h.starter===1?'O':'X'})</td><td>${h.algorithms['1'].join(' → ')}</td><td>${h.algorithms['2'].join(' → ')}</td><td>${h.winner?`학생 ${h.winner} 승리`:'무승부'}</td></tr>`).join('')}</tbody></table>`
+}
+function captureHtml(hs,w1,w2,d){
+  const i=state.info||{};
+  return `<div class="capture" id="captureSheet"><div class="cap-title">5차시 · 삼목놀이를 해보아요</div><div class="cap-info"><div>학교<br><strong>${esc(i.school||'')}</strong></div><div>학년<br><strong>${esc(i.grade||'')}</strong></div><div>반<br><strong>${esc(i.className||'')}</strong></div><div>학생 1<br><strong>${esc(i.student1Name||'')}</strong></div><div>학생 2<br><strong>${esc(i.student2Name||'')}</strong></div></div>${hs.map(h=>`<div class="cap-section"><h4>${esc(h.label)}</h4><div class="small"><strong>선(先)</strong> : 학생 ${h.starter}(${h.starter===1?'O':'X'})<br><strong>학생 1 알고리즘</strong> : ${h.algorithms['1'].join(' → ')}<br><strong>학생 2 알고리즘</strong> : ${h.algorithms['2'].join(' → ')}<br><strong>결과</strong> : ${h.winner?`학생 ${h.winner}(${h.winner===1?'O':'X'}) 승리`:'무승부'}<br><strong>실행</strong> : 학생1 [${h.executed['1'].join(', ')}] / 학생2 [${h.executed['2'].join(', ')}]<br><strong>건너뜀</strong> : 학생1 [${h.skipped['1'].join(', ')}] / 학생2 [${h.skipped['2'].join(', ')}]</div></div>`).join('')}<div class="cap-section"><strong>누적 결과</strong> · 학생 1(O) ${w1}승 / 학생 2(X) ${w2}승 / 무승부 ${d}회</div><div class="cap-section small"><strong>강화학습 정리</strong><br>게임의 결과를 확인하고 다음 게임에서 새로운 알고리즘을 만들어 보았습니다. 인공지능의 강화학습에서도 여러 행동의 결과와 보상을 확인하면서 더 좋은 행동을 찾아갑니다.<br><strong>행동 → 결과 → 보상 → 다음 행동 선택</strong></div></div>`;
+}
+async function saveAndSubmit(){
+  if(state.submissionStatus==='done'){toast('이미 제출된 짝 활동입니다.');return}
+  const btn=qs('#saveBtn');btn.disabled=true;btn.textContent='저장 중…';
+  try{
+    const sheet=qs('#captureSheet');const canvas=await html2canvas(sheet,{scale:2,backgroundColor:'#ffffff',useCORS:true});const imageData=canvas.toDataURL('image/png');
+    const i=state.info||{};const filename=`${safe(i.school)}_${safe(i.grade)}_${safe(i.className)}_${safe(i.student1Name)}_${safe(i.student2Name)}_5차시_삼목게임.png`;
+    const a=document.createElement('a');a.href=imageData;a.download=filename;a.click();
+    const groupName=`${i.student1Name||''}·${i.student2Name||''}`;
+    const r=await api('submitWorksheet',{pairCode:session.code,pairToken:session.token,action:'submitWorksheet',lesson:'5차시',worksheetTitle:'삼목놀이를 해보아요',imageData,school:i.school||'',grade:i.grade||'',className:i.className||'',groupName,student1Name:i.student1Name||'',student2Name:i.student2Name||'',filename,submittedAt:new Date().toISOString()});
+    toast('활동지가 저장되고 선생님께 제출되었습니다.');
+    await refresh(true);
+    if(r.url && confirm('활동지가 저장되고 선생님께 제출되었습니다.\n저장된 활동지를 확인하시겠습니까?')) window.open(r.url,'_blank');
+  }catch(e){btn.disabled=false;btn.textContent='결과 저장하기'}
+}
+function safe(s){return String(s||'').trim().replace(/[\\/:*?"<>|]/g,'-')||'미입력'}
+
+async function refresh(force=false){
+  if(!session.code||!session.token)return;
+  try{
+    const r=await api('getPairState',authData(),true);
+    if(!r)return;
+    if(r.role && r.role!==session.role)saveSession({role:r.role});
+    const incoming=r.state;
+    if(incoming?.myRole && !session.role)saveSession({role:incoming.myRole});
+    if(draftDirty && incoming && ['info','authoring'].includes(incoming.phase) && incoming.currentGame===draftGame){
+      incoming.myAlgorithm=[...lastOwnAlgo];
+    }
+    state=incoming;
+    setSync('연결됨');
+    if(force)lastRenderKey='';
+    if(!dragState)render(force);
+  }catch(e){setSync('짝 활동을 다시 연결하고 있습니다.',true)}
+}
+function startPolling(){clearInterval(pollTimer);setSync('연결됨');pollTimer=setInterval(()=>refresh(false),3000)}
+
+document.querySelectorAll('#headerInfo input').forEach(el=>el.addEventListener('keydown',e=>{if(e.key==='Enter')el.blur()}));
+window.addEventListener('online',()=>refresh(true));
+window.addEventListener('offline',()=>setSync('짝 활동을 다시 연결하고 있습니다.',true));
+
+(async function init(){
+  if(session.code&&session.token){startPolling();await refresh(true)}else render(true);
+})();
+</script>
+</body>
+</html>
